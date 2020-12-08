@@ -61,6 +61,12 @@ Some KPMs (AF1, AD1) involve thresholds that are different for ``design'', ``min
 
 Metrics are typically monitored on a dashboard hosted by SQuaSH (Science Quality System Harness; described in \citedsp{sqr-009}). Here we show an example of this dashboard displaying $\sim6$ months of measurements for a few metrics. These measurements are for tract 9813, as measured in the \emph{r}-band filter (HSC-R). The astrometry (two upper panels) and ellipticity (lower right plot) metrics have remained roughly the same since the Version 20.0.0 release in late June, 2020. Note, however, that there is a large increase in the photometric repeatability metric in late June (see also the photometric KPMs in Section~\ref{photometric-performance}). This happened because shortly after the release of version 20.0, we began using FGCM for photometric calibration instead of jointcal. There was some degradation of photometric quality metrics due to the introduction of the new calibration method, but the performance has been steadily improving since then. In general, FGCM is optimized for survey self-calibration with multiple exposures overlapping in space and time, and is not optimized for individual isolated tracts as in the RC2 dataset. Thus, while FGCM is likely to enable much better overall survey calibration, at RC2 scales it may offer little improvement compared to jointcal. Nonetheless, we expect the photometry metrics to continue to improve as we understand the effects of implementing FGCM in the Science Pipelines.
 
+\begin{figure}
+\includegraphics[width=1.0\columnwidth]{figures/SQuaSH_dashboard_RC2_tract9813.png}
+\caption{SQuaSH dashboard showing the past four months of metric measurements from the RC2 dataset. This view shows the metrics for tract 9813 in the HSC-R filter. The ``regression'' in the photometry metrics after late June was due to the introduction of a new photometric calibration method known as FGCM. The metrics have continued to improve since the introduction of FGCM, as our understanding of its effects on the pipeline outputs evolves.}
+\end{figure}
+
+
 \section{Photometric Performance}\label{photometric-performance}
 
 These photometric performance
