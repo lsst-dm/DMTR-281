@@ -45,25 +45,26 @@ The report for the previous version can be found in \citedsp{DMTR-251}.
 
 \maketitle
 
-The Characterization Metric Report that has accompanied previous releases of the Science Pipelines (through v19.0) has typically contained metrics that were measured using \href{https://github.com/lsst/validation_data_hsc}{validation\_data\_hsc}. This test dataset consists of 8 HSC engineering images: 2 \emph{r}-band, 4 \emph{i}'-band, and 2 \emph{y}-band. For continuity with previous releases, we report metrics from validation\_data\_hsc in this document, but we will use a more substantial dataset for characterization of future releases. For this small dataset, metric measurements were made on individual, separately-processed, single-frame images: jointcal was not run. All values were computed using the \texttt{examples/runHscTest.sh} script in the \href{https://github.com/lsst/validate_drp}{validate\_drp} package.
+%The Characterization Metric Report that has accompanied previous releases of the Science Pipelines (through v19.0) has typically contained metrics that were measured using \href{https://github.com/lsst/validation_data_hsc}{validation\_data\_hsc}. This test dataset consists of 8 HSC engineering images: 2 \emph{r}-band, 4 \emph{i}'-band, and 2 \emph{y}-band. For continuity with previous releases, we report metrics from validation\_data\_hsc in this document, but we will use a more substantial dataset for characterization of future releases. For this small dataset, metric measurements were made on individual, separately-processed, single-frame images: jointcal was not run. All values were computed using the \texttt{examples/runHscTest.sh} script in the \href{https://github.com/lsst/validate_drp}{validate\_drp} package.
 
-In this report, we also show metrics measured on the HSC-RC2 dataset. RC2 consists of 3 tracts of data taken from the HSC-SSP survey, and selected to provide a means of testing various ``pathological'' cases (e.g., difficult astrometric solutions, seeing too small to provide a well-sampled PSF, difficult fields for deblending, and large galaxies, among others). These three tracts each contain between 112--149 visits split between the HSC-G, HSC-R, HSC-I, HSC-Z, and HSC-Y (\emph{grizy}) filters. The validate\_drp scripts were run on these tracts to derive a total of 14 photometric, astrometric, and shape metrics, a subset of which are reported here. We exclude the three astrometry metrics (AM3, AD3, and AF3) that concern residuals on 200-arcminute scales, since neither the handful of CCDs in the validation\_data\_hsc dataset nor the individual tracts of RC2 span large enough spatial scales to enable these measurements. The RC2 data processing includes jointcal, and thus provides a better representation of the state of the science pipelines than the much simpler validation\_data\_hsc runs.
+In this Report, we characterize the performance of the Rubin Observatory Science Pipelines Version 21.0.0. We illustrate the performance via metrics that are measured on the HSC-RC2 dataset. RC2 consists of 3 tracts of data taken from the HSC-SSP survey, and selected to provide a means of testing various ``pathological'' cases (e.g., difficult astrometric solutions, seeing too small to provide a well-sampled PSF, difficult fields for deblending, and large galaxies, among others). These three tracts each contain between 112--149 visits split between the HSC-G, HSC-R, HSC-I, HSC-Z, and HSC-Y (\emph{grizy}) filters. The validate\_drp scripts were run on these tracts to derive the photometric, astrometric, and shape metrics that are reported here. We exclude the three astrometry metrics (AM3, AD3, and AF3) that concern residuals on 200-arcminute scales, since neither the handful of CCDs in the validation\_data\_hsc dataset nor the individual tracts of RC2 span large enough spatial scales to enable these measurements. 
 
-For comparison, we provide the \SRD required ``design'' value of each metric as defined in the Science Requirements Document \citedsp{LPM-17}, and, where available, the target for this release as defined in the Data Management Development Milestone Roadmap \citedsp{LDM-240}. For context, the \SRD does not place any constraints on \emph{y}-band for these Key Performance Metrics (KPMs).  For the photometric metrics, there are only specifications for \emph{g}, \emph{r}, and \emph{i}'. In the case of the ellipticity correlation metrics, there are specs only for \emph{r} and \emph{i}'. The \emph{y}-band measurements are of interest primarily for historical tracking.
+For comparison, we provide the \SRD required ``design'' value of each metric as defined in the Science Requirements Document \citedsp{LPM-17}.
+%, and, where available, the target for this release as defined in the Data Management Development Milestone Roadmap \citedsp{LDM-240}. 
+For context, the \SRD does not place any constraints on \emph{y}-band for these Key Performance Metrics (KPMs).  For the photometric metrics, there are only specifications for \emph{g}, \emph{r}, and \emph{i}'. In the case of the ellipticity correlation metrics, there are specs only for \emph{r} and \emph{i}'. The \emph{y}-band measurements are of interest primarily for historical tracking.
 
 Some KPMs (AF1, AD1) involve thresholds that are different for ``design'', ``minimum'', and ``stretch'' specifications. The metrics in this report are all compared to the ``design'' thresholds. The assessment of these KPMs would be different if evaluated against different thresholds.
 
-The per-cycle target numbers come from the ``KPMs'' sheet of \href{http://ls.st/LDM-240}{LDM-240}.
+%The per-cycle target numbers come from the ``KPMs'' sheet of \href{http://ls.st/LDM-240}{LDM-240}.
 
 \section{Dashboard summary of performance metrics}
 
-Metrics are typically monitored on a dashboard hosted by SQuaSH (Science Quality System Harness; described in \citedsp{sqr-009}). Here we show an example of this dashboard displaying $\sim4$ months of measurements for a few metrics. These measurements are for tract 9813, as measured in the \emph{r}-band filter (HSC-R). Note that the large increase between April-June was due to some bugs and issues in the codebase that have since been identified and fixed. The metric values in the most recent processing (with the v20.0 release candidate dubbed v20\_0\_0\_rc1) have returned to similar levels to early 2020.
+Metrics are typically monitored on a dashboard hosted by SQuaSH (Science Quality System Harness; described in \citedsp{sqr-009}). Here we show an example of this dashboard displaying $\sim6$ months of measurements for a few metrics. These measurements are for tract 9813, as measured in the \emph{r}-band filter (HSC-R). The astrometry (two upper panels) and ellipticity (lower right plot) metrics have remained roughly the same since the Version 20.0.0 release in late June, 2020. Note, however, that there is a large increase in the photometric repeatability metric in late June (see also the photometric KPMs in Section~\ref{photometric-performance}). This happened because shortly after the release of version 20.0, we began using FGCM for photometric calibration instead of jointcal. There was some degradation of photometric quality metrics due to the introduction of the new calibration method, but the performance has been steadily improving since then. In general, FGCM is optimized for survey self-calibration with multiple exposures overlapping in space and time, and is not optimized for individual isolated tracts as in the RC2 dataset. Thus, while FGCM is likely to enable much better overall survey calibration, at RC2 scales it may offer little improvement compared to jointcal. Nonetheless, we expect the photometry metrics to continue to improve as we understand the effects of implementing FGCM in the Science Pipelines.
 
 \section{Photometric Performance}\label{photometric-performance}
 
-procCalRep corresponds to requirement OSS-REQ-0275 (defined in
-\citeds{LSE-30}). All other photometric performance
-metrics follow LSS-REQ-0093 (\citeds{LSE-29}) and Table 14 of \citeds{LPM-17}.
+These photometric performance
+metrics are defined in LSS-REQ-0093 (\citeds{LSE-29}) and Table 14 of \citeds{LPM-17}.
 
 Any entries left blank are those for which we do not have data in the given filter for that dataset.
 
@@ -829,7 +830,7 @@ mas\strut
 \bottomrule
 \end{longtable}
 
-Almost all of the astrometric metrics are improved with RC2 relative to their values with validation\_data\_hsc. This behavior is expected, because validate\_drp does not include running jointcal, while the RC2 processing does include jointcal. This results in improved astrometry because (1) jointcal simultaneously fits positions of objects in all visits, and (2) RC2 contains more visits, which allows for improvement in the statistical noise of astrometry measurements.
+%Almost all of the astrometric metrics are improved with RC2 relative to their values with validation\_data\_hsc. This behavior is expected, because validate\_drp does not include running jointcal, while the RC2 processing does include jointcal. This results in improved astrometry because (1) jointcal simultaneously fits positions of objects in all visits, and (2) RC2 contains more visits, which allows for improvement in the statistical noise of astrometry measurements.
 
 
 \section{Ellipticity Correlations}\label{ellipticity-correlations}
@@ -837,7 +838,7 @@ Almost all of the astrometric metrics are improved with RC2 relative to their va
 The following metrics are defined following LSR-REQ-0097
 \citedsp{LSE-29} and Table 27 of \citeds{LPM-17}.
 
-\begin{longtable}[]{@{}lllllll@{}}
+\begin{longtable}[]{@{}llllll@{}}
 \toprule
 \begin{minipage}[b]{0.12\columnwidth}\raggedright\strut
 Metric\strut
@@ -845,12 +846,10 @@ Metric\strut
 Unit\strut
 \end{minipage} & \begin{minipage}[b]{0.14\columnwidth}\raggedright\strut
 SRD Requirement -- Design\strut
-\end{minipage} & \begin{minipage}[b]{0.14\columnwidth}\raggedright\strut
-Release 20 Target\strut
 \end{minipage} & \begin{minipage}[b]{0.12\columnwidth}\raggedright\strut
-Value (validation data)\strut
+Release 20 Value (RC2) \strut
 \end{minipage} & \begin{minipage}[b]{0.12\columnwidth}\raggedright\strut
-Value (RC2) \strut
+Release 21 Value (RC2) \strut
 \end{minipage} & \begin{minipage}[b]{0.17\columnwidth}\raggedright\strut
 Comments\strut
 \end{minipage}\tabularnewline
@@ -862,8 +861,6 @@ TE1: \emph{u}\strut
 ---\strut
 \end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
 \(\leq 2\times10^{-5}\)\strut
-\end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
-\(2\times10^{-5}\)\strut
 \end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright\strut
 ---\strut
 \end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright\strut
@@ -877,12 +874,10 @@ TE1: \emph{g}\strut
 ---\strut
 \end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
 \(\leq 2\times10^{-5}\)\strut
-\end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
-\(2\times10^{-5}\)\strut
-\end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright\strut
----\strut
 \end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright\strut
 \(1.4\times10^{-5}\) \strut
+\end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright\strut
+\(1.3\times10^{-5}\) \strut
 \end{minipage} & \begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
 \strut
 \end{minipage}\tabularnewline
@@ -892,12 +887,10 @@ TE1: \emph{r}\strut
 ---\strut
 \end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
 \(\leq 2\times10^{-5}\)\strut
-\end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
-\(2\times10^{-5}\)\strut
-\end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright\strut
-\(1.6\times10^{-5}\)\strut
 \end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright\strut
 \(2.0\times10^{-5}\)\strut
+\end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright\strut
+\(2.1\times10^{-5}\)\strut
 \end{minipage} & \begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
 \strut
 \end{minipage}\tabularnewline
@@ -907,12 +900,10 @@ TE1: \emph{i}\strut
 ---\strut
 \end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
 \(\leq 2\times10^{-5}\)\strut
-\end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
-\(2\times10^{-5}\)\strut
-\end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright\strut
-\(8.8\times10^{-7}\)\strut
 \end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright\strut
 \(1.1\times10^{-5}\)\strut
+\end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright\strut
+\(9.2\times10^{-6}\)\strut
 \end{minipage} & \begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
 \strut
 \end{minipage}\tabularnewline
@@ -922,12 +913,10 @@ TE1: \emph{z}\strut
 ---\strut
 \end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
 \(\leq 2\times10^{-5}\)\strut
-\end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
-\(2\times10^{-5}\)\strut
 \end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright\strut
----\strut
+\(1.6\times10^{-5}\) \strut
 \end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright\strut
-\(1.6\times10^{-5}\)\strut
+\(1.7\times10^{-5}\)\strut
 \end{minipage} & \begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
 \strut
 \end{minipage}\tabularnewline
@@ -937,12 +926,10 @@ TE1: \emph{y}\strut
 ---\strut
 \end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
 \(\leq 2\times10^{-5}\)\strut
-\end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
-\(2\times10^{-5}\)\strut
-\end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright\strut
-\(2.2\times10^{-5}\)\strut
 \end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright\strut
 \(9.3\times10^{-6}\)\strut
+\end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright\strut
+\(9.2\times10^{-6}\)\strut
 \end{minipage} & \begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
 \strut
 \end{minipage}\tabularnewline
@@ -952,8 +939,6 @@ TE2: \emph{u}\strut
 ---\strut
 \end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
 \(\leq 1\times10^{-7}\)\strut
-\end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
-\(2\times10^{-7}\)\strut
 \end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright\strut
 ---\strut
 \end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright\strut
@@ -967,12 +952,10 @@ TE2: \emph{g}\strut
 ---\strut
 \end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
 \(\leq 1\times10^{-7}\)\strut
-\end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
-\(2\times10^{-7}\)\strut
-\end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright\strut
----\strut
 \end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright\strut
 \(3.7\times10^{-7}\)\strut
+\end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright\strut
+\(3.6\times10^{-7}\)\strut
 \end{minipage} & \begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
 \strut
 \end{minipage}\tabularnewline
@@ -982,12 +965,10 @@ TE2: \emph{r}\strut
 ---\strut
 \end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
 \(\leq 1\times10^{-7}\)\strut
-\end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
-\(2\times10^{-7}\)\strut
-\end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright\strut
-\(2.7\times10^{-7}\)\strut
 \end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright\strut
 \(1.0\times10^{-6}\)\strut
+\end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright\strut
+\(9.5\times10^{-7}\)\strut
 \end{minipage} & \begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
 \strut
 \end{minipage}\tabularnewline
@@ -997,12 +978,10 @@ TE2: \emph{i}\strut
 ---\strut
 \end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
 \(\leq 1\times10^{-7}\)\strut
-\end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
-\(2\times10^{-7}\)\strut
-\end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright\strut
-\(7.1\times10^{-7}\)\strut
 \end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright\strut
 \(2.5\times10^{-6}\)\strut
+\end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright\strut
+\(1.8\times10^{-6}\)\strut
 \end{minipage} & \begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
 \strut
 \end{minipage}\tabularnewline
@@ -1012,12 +991,10 @@ TE2: \emph{z}\strut
 ---\strut
 \end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
 \(\leq 1\times10^{-7}\)\strut
-\end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
-\(2\times10^{-7}\)\strut
-\end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright\strut
----\strut
 \end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright\strut
 \(5.0\times10^{-7}\)\strut
+\end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright\strut
+\(5.4\times10^{-7}\)\strut
 \end{minipage} & \begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
 \strut
 \end{minipage}\tabularnewline
@@ -1027,12 +1004,10 @@ TE2: \emph{y}\strut
 ---\strut
 \end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
 \(\leq 1\times10^{-7}\)\strut
-\end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
-\(2\times10^{-7}\)\strut
 \end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright\strut
-\(3.1\times10^{-6}\)\strut
+\(1,2\times10^{-6}\)\strut
 \end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright\strut
-\(1.2\times10^{-6}\)\strut
+\(1.1\times10^{-6}\)\strut
 \end{minipage} & \begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
 \strut
 \end{minipage}\tabularnewline
